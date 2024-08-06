@@ -4,7 +4,7 @@ const query = require('../query');
 const createCategory = async(req, res)=>{
     const {name, status} = req.body;
     try{
-        db.query(query.createCategoryQuery, [name, status], (err, result) =>{
+        db.query(query.createCategoryQuery, [name, status, req.file.originalname, req.file.path], (err, result) =>{
             if(err){
                 console.error(err);
                 return res.status(500).json({err});
@@ -42,7 +42,7 @@ const updateCategory = async(req, res)=>{
     try{
         db.query(query.getCategoryQuery, [categoryId], (err, values) =>{
             if(values.length > 0){
-                db.query(query.updateCategoryQuery, [name, status, discount, categoryId], (err, values) =>{
+                db.query(query.updateCategoryQuery, [name, status, discount, req.file.originalname, req.file.path, categoryId], (err, values) =>{
                     if(err){
                         console.error(err);
                         return res.status(500).json({error:err});
