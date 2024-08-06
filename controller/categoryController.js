@@ -36,10 +36,34 @@ const readCategory = async(req, res)=>{
     }
 }
 
+const updateCategory = async(req, res)=>{
+    const categoryId = req.params.id;
+    const {name, status, discount} = req.body;
+    try{
+        db.query(query.getCategoryQuery, [categoryId], (err, values) =>{
+            if(values.length > 0){
+                db.query(query.updateCategoryQuery, [name, status, discount, categoryId], (err, values) =>{
+                    if(err){
+                        console.error(err);
+                        return res.status(500).json({error:err});
+                    }else{
+                        return res.status(301).json({message:'Category updated'});
+                    }
+                });
+            }else{
+                return res.status(404).json({message:'category do not exists'});
+            }
+        })
+    }catch(error){
+        console.error(error);
+        return res.status(500).json({error:'Internal server error'});
+    }
+}
 
 
 
 module.exports={
     createCategory,
     readCategory,
+    updateCategory,
 }
