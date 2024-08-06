@@ -1,10 +1,14 @@
 const db = require('../config/database');
 const query = require('../query');
+const fileHelper = require('../helper/fileHelper');
 
 const createCategory = async(req, res)=>{
     const {name, status} = req.body;
     try{
-        db.query(query.createCategoryQuery, [name, status, req.file.originalname, req.file.path], (err, result) =>{
+        let filename, filepath;
+        filename = req.file ? req.file.originalname : null;
+        filepath = req.file ? req.file.path : null;
+        db.query(query.createCategoryQuery, [name, status, filename, filepath], (err, result) =>{
             if(err){
                 console.error(err);
                 return res.status(500).json({err});
@@ -40,8 +44,13 @@ const updateCategory = async(req, res)=>{
     const categoryId = req.params.id;
     const {name, status, discount} = req.body;
     try{
-        db.query(query.getCategoryQuery, [categoryId], (err, values) =>{
+        db.query(query.getCategoryQuery, [categoryId], async (err, values) =>{
             if(values.length > 0){
+                const filteredData = values.find(e => e.filename !== null && e.filepath !== null);
+                if(filteredData !== null){
+                    const filePath = process.cwd() + '/' + filteredData.filepath;
+                    await fileHelper.deleteFile(filePath);
+                }
                 db.query(query.updateCategoryQuery, [name, status, discount, req.file.originalname, req.file.path, categoryId], (err, values) =>{
                     if(err){
                         console.error(err);
@@ -63,8 +72,13 @@ const updateCategory = async(req, res)=>{
 const deleteCategory = async(req, res) =>{
     const categoryId = req.params.id;
     try{
-        db.query(query.getCategoryQuery, [categoryId], (err, values) =>{
+        db.query(query.getCategoryQuery, [categoryId], async (err, values) =>{
             if(values.length > 0){
+                const filteredData = values.find(e => e.filename !== null && e.filepath !== null);
+                if(filteredData !== null){
+                    const filePath = process.cwd() + '/' + filteredData.filepath;
+                    await fileHelper.deleteFile(filePath);
+                }
                 db.query(query.deleteCategoryQuery, [categoryId], (err, values) =>{
                     if(err){
                         console.error(err);

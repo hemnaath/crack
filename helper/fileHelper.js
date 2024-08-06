@@ -1,6 +1,7 @@
 const multer = require('multer');
 const path = require('path');
 const db = require('../config/database');
+const fs = require('fs').promises
 
 
 const categoryStorage = multer.diskStorage({
@@ -21,6 +22,14 @@ const fileFilter = async(req, file, cb)=>{
     }
 }
 
+const deleteFile = async(filePath) =>{
+    try{
+        await fs.unlink(filePath);
+    }catch(error){
+        console.log(error);
+    }
+}
+
 const categoryUpload = multer({
     storage: categoryStorage,
     fileFilter: fileFilter
@@ -30,4 +39,5 @@ const categoryUpload = multer({
 
 module.exports = { 
     categoryUpload,
+    deleteFile
 };
