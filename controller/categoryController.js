@@ -49,7 +49,30 @@ const updateCategory = async(req, res)=>{
                     }else{
                         return res.status(301).json({message:'Category updated'});
                     }
-                });
+                })
+            }else{
+                return res.status(404).json({message:'category do not exists'});
+            }
+        })
+    }catch(error){
+        console.error(error);
+        return res.status(500).json({error:'Internal server error'});
+    }
+}
+
+const deleteCategory = async(req, res) =>{
+    const categoryId = req.params.id;
+    try{
+        db.query(query.getCategoryQuery, [categoryId], (err, values) =>{
+            if(values.length > 0){
+                db.query(query.deleteCategoryQuery, [categoryId], (err, values) =>{
+                    if(err){
+                        console.error(err);
+                        return res.status(500).json({error:err});
+                    }else{
+                        return res.status(301).json({message:'Category deleted'});
+                    }
+                })
             }else{
                 return res.status(404).json({message:'category do not exists'});
             }
@@ -66,4 +89,5 @@ module.exports={
     createCategory,
     readCategory,
     updateCategory,
+    deleteCategory,
 }
