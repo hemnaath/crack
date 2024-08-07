@@ -6,12 +6,21 @@ const updateWithoutFile = `UPDATE category SET name = ?, status = ?, discount = 
 const deleteCategoryQuery = `DELETE FROM category WHERE id = ?`;
 
 
+const createProductQuery = `INSERT INTO product (name, status, unit, price, category_id, filename, filepath) VALUES (?,?,?,?,?,?,?)`;
+const readProductQuery = `SELECT * FROM product`;
+const getProductQuery = `SELECT * FROM product WHERE id = ?`;
+const updateProductQuery = `UPDATE product SET name = ?, status = ?, unit = ?, price = ?, category_id = ?, filename = ?, filepath = ? WHERE id = ?`;
+const updateProductWithoutFile = `UPDATE product SET name = ?, status = ?, unit = ?, price = ?, category_id = ? WHERE id = ?`;
+const deleteProductQuery = `DELETE FROM product WHERE id = ?`;
+
+
+
 
 module.exports={
-    createCategoryQuery,
-    readCategoryQuery,
-    getCategoryQuery,
-    updateCategoryQuery,
-    deleteCategoryQuery,
-    updateWithoutFile
+    createCategoryQuery, createProductQuery,
+    readCategoryQuery, readProductQuery,
+    getCategoryQuery, getProductQuery,
+    updateCategoryQuery, updateProductQuery,
+    deleteCategoryQuery, updateProductWithoutFile,
+    updateWithoutFile, deleteProductQuery,
 }

@@ -13,6 +13,15 @@ const categoryStorage = multer.diskStorage({
     }
 });
 
+const productStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/products');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    }
+});
+
 const fileFilter = async(req, file, cb)=>{  
     const allowedFileType = ['image/jpeg', 'image/jpg', 'image/png'];
     if(allowedFileType.includes(file.mimetype)){
@@ -35,9 +44,15 @@ const categoryUpload = multer({
     fileFilter: fileFilter
 });
 
+const productUpload = multer({
+    storage: productStorage,
+    fileFilter: fileFilter
+});
+
 
 
 module.exports = { 
     categoryUpload,
-    deleteFile
+    deleteFile,
+    productUpload,
 };
