@@ -46,19 +46,30 @@ const updateCategory = async(req, res)=>{
     try{
         db.query(query.getCategoryQuery, [categoryId], async (err, values) =>{
             if(values.length > 0){
-                const filteredData = values.find(e => e.filename !== null && e.filepath !== null);
-                if(filteredData !== null){
-                    const filePath = process.cwd() + '/' + filteredData.filepath;
-                    await fileHelper.deleteFile(filePath);
-                }
-                db.query(query.updateCategoryQuery, [name, status, discount, req.file.originalname, req.file.path, categoryId], (err, values) =>{
-                    if(err){
-                        console.error(err);
-                        return res.status(500).json({error:err});
-                    }else{
-                        return res.status(301).json({message:'Category updated'});
+                if(req.file !== undefined){
+                    const filteredData = values.find(e => e.filename !== null && e.filepath !== null);
+                    if(filteredData !== null){
+                        const filePath = process.cwd() + '/' + filteredData.filepath;
+                        await fileHelper.deleteFile(filePath);
                     }
-                })
+                    db.query(query.updateCategoryQuery, [name, status, discount, req.file.originalname, req.file.path, categoryId], (err, values) =>{
+                        if(err){
+                            console.error(err);
+                            return res.status(500).json({error:err});
+                        }else{
+                            return res.status(301).json({message:'Category updated'});
+                        }
+                    })
+                }else{
+                    db.query(query.updateWithoutFile, [name, status, discount, categoryId], (err, values) =>{
+                        if(err){
+                            console.error(err);
+                            return res.status(500).json({error:err});
+                        }else{
+                            return res.status(301).json({message:'Category updated'});
+                        }
+                    })
+                }
             }else{
                 return res.status(404).json({message:'category do not exists'});
             }
